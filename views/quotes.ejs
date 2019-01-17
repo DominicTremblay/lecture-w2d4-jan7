@@ -1,25 +1,62 @@
 
-<% include ./partials/_head %> 
+    <% include ./partials/_head %>
 
-<h1>Movie Quotes</h1>
-   
+    <div class="container">
 
-<ul>
-  <% for (var quoteId in quotes) { %>
-    <li><%= quotes[quoteId].quote %></li>
-      <ul>
-      <% for (var commentId of quotes[quoteId].comments) { %>
-        <li>
-          
-          <%= comments[commentId].comment %></li>
+      <div class="accordion" id="quote-list">
+        <% for (const quoteId in quotes) { %>
+        <div class="card">
+          <div class="card-header" id="headingTwo">
+            <h5 class="mb-0">
+              <button
+                class="btn btn-link collapsed"
+                type="button"
+                data-toggle="collapse"
+                data-target="#<%= quoteId %>"
+                aria-expanded="false"
+                aria-controls="collapseTwo"
+              >
+                <%= quotes[quoteId].quote %>
+              </button>
+            </h5>
 
-         <% } %>
-      </ul>
-  <% } %>
-</ul>
+            <span>
+              <form method="get" action="/quotes/<%= quoteId %>/update"><input type="submit" class="btn btn-secondary btn-sm" value="Edit"></form>
+              <form method="post" action="/quotes/<%= quoteId %>?_method=DELETE"><input type="submit" class="btn btn-secondary btn-sm"
+                  value="Delete"></form>
+            </span>
 
+          </div>
+          <div
+            id="<%= quotes[quoteId].id %>"
+            class="collapse"
+            aria-labelledby="headingTwo"
+            data-parent="#quote-list"
+          >
+            <div class="card-body">
+              <h4>Comments</h4>
 
+              <ul class="list-group">
+                <% for (const commentId of quotes[quoteId].comments) { %>
+                <li class="list-group-item">
+                  <%= comments[commentId].comment %> 
+                  <span>
+                    <form method="get" action="/comments/<%= comments[commentId].id%>/update"><input type="submit" class="btn btn-secondary btn-sm"
+                      value="Edit"></form>
+                      <form method="post" action="/comments/<%= comments[commentId].id%>?_method=DELETE"><input type="submit" class="btn btn-secondary btn-sm"
+                      value="Delete"></form>
+                    </span>
+                </li>
+                <% } %>
+              </ul>
 
-
-</body>
+              <a href="/quotes/<%= quoteId %>/comments/new" class="btn btn-info">Add Comment</a>
+            </div>
+          </div>
+        </div>
+        <% } %>
+      </div>
+      <a href="/quotes/new" class="btn btn-primary">Add Quote</a>
+    </div>
+  </body>
 </html>

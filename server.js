@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const uuidv1 = require('uuid/v1');
+const methodOverride = require('method-override');
 
 const app = express();
 const port = 3000;
@@ -8,6 +9,7 @@ const port = 3000;
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(methodOverride('_method'));
 
 const movieQuotesDb = {
   'd9424e04-9df6-4b76-86cc-9069ca8ee4bb': {
@@ -62,6 +64,10 @@ const createQuote = quote => {
   // Add the new object to movieQuotesDB
 
   movieQuotesDb[id] = newQuote;
+};
+
+const deleteQuote = quoteId => {
+  delete movieQuotesDb[quoteId];
 };
 
 const updateQuote = (quoteId, quote) => {
@@ -124,7 +130,7 @@ app.get('/quotes/:quoteId/update', (req, res) => {
 
 // update the quote in the movieQuotesDB
 
-app.post('/quotes/:quoteId', (req, res) => {
+app.put('/quotes/:quoteId', (req, res) => {
   // Extract the quote from the form
   const quoteId = req.params.quoteId;
   const quote = req.body.quote;
@@ -144,6 +150,15 @@ app.post('/quotes/:quoteId', (req, res) => {
 });
 
 // Delete a quote
+
+app.delete('/quotes/:quoteId', (req, res) => {
+  // extract the quoteId from the url
+  const { quoteId } = req.params;
+  // delete the quote
+  deleteQuote(quoteId);
+  // redirect to /quotes
+  res.redirect('/quotes');
+});
 
 app.listen(port, function() {
   console.log('Server listening on port ' + port);

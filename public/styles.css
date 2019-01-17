@@ -1,5 +1,45 @@
-body {
-  font-family: Arial, Helvetica, sans-serif;
+.header {
+  background-color: steelblue;
+  color: white;
+  padding: 0.5em;
+  border-radius: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div.authentication {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+div.login,
+div.register {
+  padding: 0.5em;
+}
+
+div.login:hover,
+div.register:hover {
+  border-radius: 5px;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.header h2 {
+  margin: 0;
+}
+
+.header div {
+  margin-right: 1em;
+}
+
+.header div a {
+  text-decoration: none;
+  color: white;
+}
+
+.header div a:hover {
+  color: wheat;
 }
 
 button.btn-link {
@@ -51,4 +91,27 @@ div.card-header span input[type='submit'],
 div.form-group {
   display: flex;
   align-items: center;
+}
+
+div.form-group label {
+  width: 10em;
+}
+
+div.welcome-msg {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+div.welcome-msg input[type='submit'] {
+  background-color: cornflowerblue;
+  border: 1px solid lightblue;
+  padding: 0.2em;
+  border-radius: 5px;
+  margin: 0 1em;
+}
+
+div.welcome-msg input[type='submit']:hover {
+  background-color: lightblue;
+  border: 1px solid cornflowerblue;
 }
