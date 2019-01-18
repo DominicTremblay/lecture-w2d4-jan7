@@ -32,10 +32,25 @@
   <header class="header">
     <h1>Movie Quotes</h1>
 
+    <% if (currentUser) { %>
+    <!-- the user is logged in -->
+    <div class="authentication">
+      <div>Welcome <%= currentUser.name %></div>
+      <div>
+        <form method="post" action="/logout?_method=delete">
+          <input type="submit" value="Logout">
+        </form>
+      </div>
+    </div>
+    <% } else { %> 
+
+    <!-- if the user is not logged in -->
     <div class="authentication">
       <div class="login">Login</div> 
       <div>|</div>
       <div class="register">Register</div>
     </div>
+
+    <% } %> 
 
   </header>

@@ -2,14 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const uuidv1 = require('uuid/v1');
 const methodOverride = require('method-override');
+var cookieParser = require('cookie-parser');
 
 const app = express();
 const port = 3000;
 
 app.set('view engine', 'ejs');
+
+// Middlewares
 app.use(express.static('public'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
+app.use(cookieParser());
 
 const movieQuotesDb = {
   'd9424e04-9df6-4b76-86cc-9069ca8ee4bb': {
@@ -46,6 +50,21 @@ const quoteComments = {
   },
 };
 
+const usersDb = {
+  'eb849b1f-4642-4c16-a77b-71ac2f90996f': {
+    id: 'eb849b1f-4642-4c16-a77b-71ac2f90996f',
+    name: 'Kent Cook',
+    email: 'really.kent.cook@kitchen.com',
+    password: 'cookinglessons',
+  },
+  '1dc937ec-7d71-4f37-9560-eef9d998a9b7': {
+    id: '1dc937ec-7d71-4f37-9560-eef9d998a9b7',
+    name: 'Phil A. Mignon',
+    email: 'good.philamignon@steak.com',
+    password: 'meatlover',
+  },
+};
+
 // Functions
 
 const createQuote = quote => {
@@ -75,14 +94,114 @@ const updateQuote = (quoteId, quote) => {
   movieQuotesDb[quoteId].quote = quote;
 };
 
+const authenticateUser = (email, password) => {
+  // loop over the usersDb object
+  // if not match is found, return false
+
+  for (const userId in usersDb) {
+    const user = usersDb[userId];
+    // if the emails and passwords match, return the userId
+    if (user.email === email && user.password === password) {
+      return user.id;
+    }
+  }
+
+  return false;
+};
+
+const createUser = (name, email, password) => {
+  // create a new user object
+  // Format:
+  // {
+  //   id: '1dc937ec-7d71-4f37-9560-eef9d998a9b7',
+  //   name: 'Phil A. Mignon',
+  //   email: 'good.philamignon@steak.com',
+  //   password: 'meatlover',
+  // }
+  // generate a userId
+  // create a new object following the same structure as above
+  // add the object to the usersDb
+  // return the userId
+};
+
 // End Points
 app.get('/', function(req, res) {
   res.redirect('/quotes');
 });
 
+// Endpoints for managing the login
+
+// Render the login page
+app.get('/login', (req, res) => {
+  res.render('login');
+});
+
+app.post('/login', (req, res) => {
+  // Extract email and password from the form
+
+  const email = req.body.email;
+  const password = req.body.password;
+  // es6 destructuring:
+  // const {email, password} = req.body;
+
+  // Authenticate the user -> check if a user exists with this email and password
+
+  const userId = authenticateUser(email, password);
+
+  if (userId) {
+    // If the user is authenticated -> login
+    // Setting the cookie for that user
+    // redirect to /quotes
+    res.cookie('userId', userId);
+    res.redirect('/quotes');
+  } else {
+    // If the user is not found
+    // error message "Wrong Credentials" -> skipping this one for now
+    // redirect to login
+    res.redirect('/login');
+  }
+});
+
+// Logout endpoint
+
+app.delete('/logout', (req, res) => {
+  res.cookie('userId', null);
+  res.redirect('/quotes');
+});
+
+// Register
+
+// Display the register form
+app.get('/register', (req, res) => {
+  templateVars = { currentUser: null };
+
+  res.render('register', currentUser);
+});
+
+app.post('/users', (req, res) => {
+  // extract the information from the form -> req.body -> name, email, password
+  // create the user in the usersDb
+  // userId = createUser(name, email, password)
+  // set the cookie of that user
+  // redirect to quotes
+});
+
 // List the quotes and the comments
 app.get('/quotes', function(req, res) {
-  const templateVars = { quotes: movieQuotesDb, comments: quoteComments };
+  // extract the userId from the cookies
+  const userId = req.cookies.userId;
+  // Retrieve the user with that userId in usersDb
+  const currentUser = usersDb[userId];
+
+  // currentUser is either:
+  // 1. the user object
+  // 2. undefined
+
+  const templateVars = {
+    quotes: movieQuotesDb,
+    comments: quoteComments,
+    currentUser: currentUser,
+  };
 
   res.render('quotes', templateVars);
 });
